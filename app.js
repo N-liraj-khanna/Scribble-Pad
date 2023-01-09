@@ -14,7 +14,10 @@ const io = require("socket.io")(PORT, {
 // Connections
 io.on("connection", (socket) => {
   console.log("User Connected");
-  // console.log(socket);
+
+  socket.on("canvas-data", (data) => {
+    socket.broadcast.emit("canvas-data", data);
+  });
 });
 
 app.get("/", (req, res) => {
@@ -24,4 +27,3 @@ app.get("/", (req, res) => {
 // app.listen(5000, () => {
 //   console.log("Server Up and Running on port 5000");
 // });
-

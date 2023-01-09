@@ -16,19 +16,37 @@ const Canvas = ({ color }) => {
     };
   }, []);
 
+  useEffect(()=>{
+    if(socket==null) return;
+    socket.on("canvas-data", (data) => {
+      setDrawData(data);
+      let image = new Image();
+      let canvas = document.querySelector("#canvas-sketch");
+      let ctx = canvas.getContext("2d");
+      image.onload =  function(e) {
+        ctx.drawImage(image, 0, 0);
+      };
+      image.src=data;
+    })
+  },[socket])
+
   useEffect(() => {
     drawOnCanvas();
     if (drawData) {
       let image = new Image();
       let canvas = document.querySelector("#canvas-sketch");
       let ctx = canvas.getContext("2d");
-      image.onload = function(e) {
+      image.onload =  function(e) {
         ctx.drawImage(image, 0, 0);
       };
       image.src = drawData;
     }
   }, [color]);
 
+  useEffect(()=>{
+    if(socket==null || drawData==null) return;
+    socket.emit("canvas-data", drawData);
+  },[drawData,socket])
   const drawOnCanvas = function() {
     let canvas = document.querySelector("#canvas-sketch");
     let ctx = canvas.getContext("2d");
